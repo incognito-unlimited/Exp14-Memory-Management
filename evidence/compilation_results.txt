@@ -1,0 +1,92 @@
+============================================================
+LAB 2 - COMPILATION RESULTS
+============================================================
+Date (UTC) : 2026-11-17 20:33:42 UTC
+Host       : Linux 6.18.54.1-microsoft-standard-WSL2 x86_64
+Compiler   : gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+Compiler path: /usr/bin/gcc
+Flags      : -Wall -Wextra -std=c11 -g -O1 -fsanitize=address -fno-omit-frame-pointer
+Mode       : all six programs compiled with AddressSanitizer
+============================================================
+
+----- original/snippet1.c -> build/snippet1 -----
+$ gcc -Wall -Wextra -std=c11 -g -O1 -fsanitize=address -fno-omit-frame-pointer original/snippet1.c -o build/snippet1
+original/snippet1.c: In function ‘main’:
+original/snippet1.c:22:20: warning: argument 1 value ‘18446744073709551615’ exceeds maximum object size 9223372036854775807 [-Walloc-size-larger-than=]
+   22 |     char *buffer = malloc(requested_bytes);
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from original/snippet1.c:12:
+/usr/include/stdlib.h:676:14: note: in a call to allocation function ‘malloc’ declared here
+  676 | extern void *malloc (size_t __size) __THROW __attribute_malloc__
+      |              ^~~~~~
+exit_code=0
+
+----- original/snippet2.c -> build/snippet2 -----
+$ gcc -Wall -Wextra -std=c11 -g -O1 -fsanitize=address -fno-omit-frame-pointer original/snippet2.c -o build/snippet2
+original/snippet2.c: In function ‘main’:
+original/snippet2.c:30:5: warning: pointer ‘message’ used after ‘free’ [-Wuse-after-free]
+   30 |     printf("[!] After writing to freed memory: %s\n", message);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+original/snippet2.c:23:5: note: call to ‘free’ here
+   23 |     free(message);
+      |     ^~~~~~~~~~~~~
+original/snippet2.c:29:16: warning: pointer ‘message’ used after ‘free’ [-Wuse-after-free]
+   29 |     message[0] = 'X';
+      |     ~~~~~~~~~~~^~~~~
+original/snippet2.c:23:5: note: call to ‘free’ here
+   23 |     free(message);
+      |     ^~~~~~~~~~~~~
+original/snippet2.c:26:5: warning: pointer ‘message’ used after ‘free’ [-Wuse-after-free]
+   26 |     printf("[!] After free(): %s\n", message);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+original/snippet2.c:23:5: note: call to ‘free’ here
+   23 |     free(message);
+      |     ^~~~~~~~~~~~~
+In file included from /usr/include/stdio.h:974,
+                 from original/snippet2.c:9:
+In function ‘printf’,
+    inlined from ‘main’ at original/snippet2.c:26:5:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:118:10: warning: pointer ‘message’ used after ‘free’ [-Wuse-after-free]
+  118 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+original/snippet2.c: In function ‘main’:
+original/snippet2.c:23:5: note: call to ‘free’ here
+   23 |     free(message);
+      |     ^~~~~~~~~~~~~
+In function ‘printf’,
+    inlined from ‘main’ at original/snippet2.c:30:5:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:118:10: warning: pointer ‘message’ used after ‘free’ [-Wuse-after-free]
+  118 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+original/snippet2.c: In function ‘main’:
+original/snippet2.c:23:5: note: call to ‘free’ here
+   23 |     free(message);
+      |     ^~~~~~~~~~~~~
+exit_code=0
+
+----- original/snippet3.c -> build/snippet3 -----
+$ gcc -Wall -Wextra -std=c11 -g -O1 -fsanitize=address -fno-omit-frame-pointer original/snippet3.c -o build/snippet3
+original/snippet3.c: In function ‘main’:
+original/snippet3.c:40:5: warning: pointer ‘scores’ used after ‘free’ [-Wuse-after-free]
+   40 |     release_again(scores);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+original/snippet3.c:36:5: note: call to ‘free’ here
+   36 |     free(scores);
+      |     ^~~~~~~~~~~~
+exit_code=0
+
+----- fixed/snippet1_fixed.c -> build/snippet1_fixed -----
+$ gcc -Wall -Wextra -std=c11 -g -O1 -fsanitize=address -fno-omit-frame-pointer fixed/snippet1_fixed.c -o build/snippet1_fixed
+exit_code=0
+
+----- fixed/snippet2_fixed.c -> build/snippet2_fixed -----
+$ gcc -Wall -Wextra -std=c11 -g -O1 -fsanitize=address -fno-omit-frame-pointer fixed/snippet2_fixed.c -o build/snippet2_fixed
+exit_code=0
+
+----- fixed/snippet3_fixed.c -> build/snippet3_fixed -----
+$ gcc -Wall -Wextra -std=c11 -g -O1 -fsanitize=address -fno-omit-frame-pointer fixed/snippet3_fixed.c -o build/snippet3_fixed
+exit_code=0
+
+============================================================
+COMPILATION SUMMARY: see exit_code fields above.
+============================================================

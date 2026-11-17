@@ -1,0 +1,23 @@
+============================================================
+LAB 2 - GDB VERIFICATION (CORRECTED PROGRAM 1)
+============================================================
+Date (UTC) : 2026-11-17 20:33:46 UTC
+GDB        : GNU gdb (Ubuntu 17.1-2ubuntu1) 17.1
+Binary     : build/snippet1_fixed
+=============== gdb -q -batch ... ===============
+$ ASAN_OPTIONS=detect_leaks=0 gdb -q -batch -ex 'set pagination off' -ex 'break main' -ex 'run' -ex 'bt' -ex 'continue' ./build/snippet1_fixed
+Breakpoint 1 at 0x1289: file fixed/snippet1_fixed.c, line 18.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffe558) at fixed/snippet1_fixed.c:18
+18	{
+#0  main (argc=1, argv=0x7fffffffe558) at fixed/snippet1_fixed.c:18
+[*] Requesting 64 bytes of heap memory...
+[*] Buffer contents: Checked allocation demonstration
+[+] Memory freed and pointer set to NULL.
+[Inferior 1 (process 512) exited normally]
+
+============================================================
+GDB SESSION END
+============================================================

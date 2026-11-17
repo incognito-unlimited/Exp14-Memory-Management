@@ -1,0 +1,127 @@
+============================================================
+LAB 2 - ADDRESSSANITIZER RESULTS: ORIGINAL VULNERABLE PROGRAMS
+============================================================
+Date (UTC) : 2026-11-17 20:33:45 UTC
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1
+These diagnostics belong to the deliberately vulnerable originals.
+They are kept separate from the corrected-program results.
+============================================================
+
+----- ./build/snippet1 (VULNERABLE) -----
+$ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1 ./build/snippet1
+==486==WARNING: AddressSanitizer failed to allocate 0xffffffffffffffff bytes
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==486==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x7606c2397a61 bp 0x7ffc241f23c0 sp 0x7ffc241f23a8 T0)
+==486==The signal is caused by a WRITE memory access.
+==486==Hint: address points to the zero page.
+    #0 0x7606c2397a61 in __memmove_avx_unaligned_erms ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:271
+    #1 0x6017c2b53275 in strcpy /usr/include/x86_64-linux-gnu/bits/string_fortified.h:93
+    #2 0x6017c2b53275 in main original/snippet1.c:25
+    #3 0x7606c222a600 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:59
+    #4 0x7606c222a717 in __libc_start_main_impl ../csu/libc-start.c:360
+    #5 0x6017c2b53164 in _start (/mnt/d/Projects/Lab2-Memory-Management/build/snippet1+0x1164) (BuildId: 7c8db7b65e500c0fb9cbf3e59be7c18d683c9385)
+
+==486==Register values:
+rax = 0x0000000000000000  rbx = 0x0000000000000000  rcx = 0x0000000000000004  rdx = 0x0000000000000023  
+rdi = 0x0000000000000000  rsi = 0x00006017c2b54080  rbp = 0x00007ffc241f23c0  rsp = 0x00007ffc241f23a8  
+ r8 = 0x000000007fff8000   r9 = 0x00000c0378562800  r10 = 0x0000000000000022  r11 = 0x0000000000000022  
+r12 = 0x00007ffc241f24f8  r13 = 0x0000000000000001  r14 = 0x00007606c2db5000  r15 = 0x00006017c2b55d50  
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:271 in __memmove_avx_unaligned_erms
+==486==ABORTING
+exit_code=1
+
+----- ./build/snippet2 (VULNERABLE) -----
+$ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1 ./build/snippet2
+=================================================================
+==487==ERROR: AddressSanitizer: heap-use-after-free on address 0x7a8a42fe0010 at pc 0x60ccebeee2fe bp 0x7fffaa47a390 sp 0x7fffaa47a380
+WRITE of size 1 at 0x7a8a42fe0010 thread T0
+    #0 0x60ccebeee2fd in main original/snippet2.c:29
+    #1 0x7e4a43c2a600 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:59
+    #2 0x7e4a43c2a717 in __libc_start_main_impl ../csu/libc-start.c:360
+    #3 0x60ccebeee184 in _start (/mnt/d/Projects/Lab2-Memory-Management/build/snippet2+0x1184) (BuildId: d809885c4d1e2f79f8309d0caa272f432d098d88)
+
+0x7a8a42fe0010 is located 0 bytes inside of 48-byte region [0x7a8a42fe0010,0x7a8a42fe0040)
+freed by thread T0 here:
+    #0 0x7e4a4412a3ff in free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:51
+    #1 0x60ccebeee2a0 in main original/snippet2.c:23
+    #2 0x7e4a43c2a600 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:59
+    #3 0x7e4a43c2a717 in __libc_start_main_impl ../csu/libc-start.c:360
+    #4 0x60ccebeee184 in _start (/mnt/d/Projects/Lab2-Memory-Management/build/snippet2+0x1184) (BuildId: d809885c4d1e2f79f8309d0caa272f432d098d88)
+
+previously allocated by thread T0 here:
+    #0 0x7e4a4412b60f in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:67
+    #1 0x60ccebeee25f in main original/snippet2.c:15
+    #2 0x7e4a43c2a600 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:59
+    #3 0x7e4a43c2a717 in __libc_start_main_impl ../csu/libc-start.c:360
+    #4 0x60ccebeee184 in _start (/mnt/d/Projects/Lab2-Memory-Management/build/snippet2+0x1184) (BuildId: d809885c4d1e2f79f8309d0caa272f432d098d88)
+
+SUMMARY: AddressSanitizer: heap-use-after-free original/snippet2.c:29 in main
+Shadow bytes around the buggy address:
+  0x7a8a42fdfd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7a8a42fdfe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7a8a42fdfe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7a8a42fdff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7a8a42fdff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x7a8a42fe0000: fa fa[fd]fd fd fd fd fd fa fa fa fa fa fa fa fa
+  0x7a8a42fe0080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7a8a42fe0100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7a8a42fe0180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7a8a42fe0200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7a8a42fe0280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==487==ABORTING
+exit_code=1
+
+----- ./build/snippet3 (VULNERABLE) -----
+$ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1 ./build/snippet3
+=================================================================
+==488==ERROR: AddressSanitizer: attempting double-free on 0x7024007e0010 in thread T0:
+    #0 0x74040192a3ff in free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:51
+    #1 0x616559ea0211 in release_again original/snippet3.c:19
+    #2 0x616559ea0273 in main original/snippet3.c:40
+    #3 0x74040142a600 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:59
+    #4 0x74040142a717 in __libc_start_main_impl ../csu/libc-start.c:360
+    #5 0x616559ea0144 in _start (/mnt/d/Projects/Lab2-Memory-Management/build/snippet3+0x1144) (BuildId: e74e5d4fbcf82f97f4450e40c360744f5dd7a62e)
+
+0x7024007e0010 is located 0 bytes inside of 16-byte region [0x7024007e0010,0x7024007e0020)
+freed by thread T0 here:
+    #0 0x74040192a3ff in free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:51
+    #1 0x616559ea0255 in main original/snippet3.c:36
+    #2 0x74040142a600 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:59
+    #3 0x74040142a717 in __libc_start_main_impl ../csu/libc-start.c:360
+    #4 0x616559ea0144 in _start (/mnt/d/Projects/Lab2-Memory-Management/build/snippet3+0x1144) (BuildId: e74e5d4fbcf82f97f4450e40c360744f5dd7a62e)
+
+previously allocated by thread T0 here:
+    #0 0x74040192b60f in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:67
+    #1 0x616559ea022a in main original/snippet3.c:24
+    #2 0x74040142a600 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:59
+    #3 0x74040142a717 in __libc_start_main_impl ../csu/libc-start.c:360
+    #4 0x616559ea0144 in _start (/mnt/d/Projects/Lab2-Memory-Management/build/snippet3+0x1144) (BuildId: e74e5d4fbcf82f97f4450e40c360744f5dd7a62e)
+
+SUMMARY: AddressSanitizer: double-free original/snippet3.c:19 in release_again
+==488==ABORTING
+exit_code=1
+
+============================================================
+ORIGINAL-PROGRAM RESULTS END
+============================================================

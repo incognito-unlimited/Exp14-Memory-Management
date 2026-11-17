@@ -1,0 +1,43 @@
+============================================================
+LAB 2 - ADDRESSSANITIZER RESULTS: CORRECTED PROGRAMS
+============================================================
+Date (UTC) : 2026-11-17 20:33:45 UTC
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1
+Expected outcome: no AddressSanitizer diagnostic and exit_code=0.
+snippet1_fixed --simulate-oom is an extra controlled failure-path check;
+it is expected to print an application error and exit_code=1, with no
+AddressSanitizer report.
+============================================================
+
+----- ./build/snippet1_fixed -----
+$ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1 ./build/snippet1_fixed
+[*] Requesting 64 bytes of heap memory...
+[*] Buffer contents: Checked allocation demonstration
+[+] Memory freed and pointer set to NULL.
+exit_code=0
+
+----- ./build/snippet2_fixed -----
+$ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1 ./build/snippet2_fixed
+[*] Before free(): Heap memory before free
+[*] Length calculated before free(): 23
+[+] Pointer set to NULL after free().
+[*] Post-free guard confirms the pointer is NULL.
+exit_code=0
+
+----- ./build/snippet3_fixed -----
+$ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1 ./build/snippet3_fixed
+[*] Sum: 100
+[+] Allocation freed once; pointer set to NULL.
+[*] Pointer is already NULL; duplicate free skipped.
+exit_code=0
+
+----- allocation-failure path check -----
+$ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:allocator_may_return_null=1:print_stacktrace=1 ./build/snippet1_fixed --simulate-oom
+==482==WARNING: AddressSanitizer failed to allocate 0xffffffffffffffff bytes
+[!] Error: malloc() failed for 18446744073709551615 bytes; no memory was written.
+[*] Requesting 18446744073709551615 bytes of heap memory...
+exit_code=1
+
+============================================================
+CORRECTED-PROGRAM RESULTS END
+============================================================
